@@ -45,9 +45,9 @@ def simpleFactory(data, ch_1x1, ch_3x3):
     return concat
 
 #%% now write down the full model using the building blocks
-def deepflow(channels, n_classes):
+def deepflow(n_channels, n_classes):
 	# model = deepflow([1,2,3,4], 4, .01, .09, .0005)
-    n_channels = len(channels)
+    #n_channels = len(channels)
     inputs = Input(shape=(66, 66, n_channels)) # 66x66
     conv1 = convFactory(data=inputs, num_filter=96 , kernel=(3,3), pad="same", act_type="relu") # same
     in3a = simpleFactory(conv1, 32, 32)
