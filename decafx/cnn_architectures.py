@@ -45,7 +45,7 @@ def simpleFactory(data, ch_1x1, ch_3x3):
     return concat
 
 #%% now write down the full model using the building blocks
-def deepflow(channels, n_classes, lr, momentum, decay):
+def deepflow(channels, n_classes):
 	# model = deepflow([1,2,3,4], 4, .01, .09, .0005)
     n_channels = len(channels)
     inputs = Input(shape=(66, 66, n_channels)) # 66x66
