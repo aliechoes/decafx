@@ -64,8 +64,8 @@ def deepflow(n_channels, n_classes):
     in6b = simpleFactory(in6a, 176, 160)
     in6c = simpleFactory(in6b, 176, 160)
     pool = AveragePooling2D(pool_size=(9, 9), strides=None, padding='valid', data_format=None)(in6c) # valid
-    flatten = Flatten()(pool)
-    fc = Dense(n_classes, activation=None, name='last-layer-activations')(flatten)
+    flatten = Flatten(name='flatten-activations')(pool)
+    fc = Dense(n_classes, activation=None, name='fc-activations')(flatten)
     softmax = Activation(activation="softmax")(fc)
     model = Model(inputs=inputs, outputs=softmax)
     model.compile(optimizer='adam',
@@ -76,5 +76,5 @@ def deepflow(n_channels, n_classes):
 #%%
 #%%
 def get_last_layer(deepflow):
-        last = Model(inputs=deepflow.input, outputs=deepflow.get_layer(name='last-layer-activations').output)
+        last = Model(inputs=deepflow.input, outputs=deepflow.get_layer(name='flatten-activations').output)
         return(last)
