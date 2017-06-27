@@ -145,4 +145,5 @@ def cae_indepIn(nchannels=2, imsize=(32,32), encoding_dim_multiplier=8,
     
     out=Convolution2D(nchannels, (3, 3), padding='same',activation=output_activ,name='output')(x)
     model=Model(inputs=ch_in,outputs=out)
+	model.compile(loss='mse', optimizer='adam')
     return model
