@@ -24,6 +24,13 @@ from keras.layers.merge import concatenate #Concatenate (capital C) not working
 def get_encoder(autoencoder):
         encoder = Model(inputs=autoencoder.input, outputs=autoencoder.get_layer(name='encoder').output)
         return(encoder)
+
+def cae_encode(data, encoder):
+    imsize= (data.shape[1],data.shape[2])
+    X_enc=encoder.predict([data[:,:,:,0].reshape(data.shape[0], imsize[0], imsize[0], 1),
+                      data[:,:,:,1].reshape(data.shape[0], imsize[0], imsize[0], 1)])
+    num_pixels = X_enc.shape[1] * X_enc.shape[2] * X_enc.shape[3] #encoded pixels
+    return(X_enc.reshape(X_enc.shape[0], num_pixels))
     
 #%%
 def cae_indepIn(nchannels=2, imsize=(32,32), encoding_dim_multiplier=8,
