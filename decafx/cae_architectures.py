@@ -19,6 +19,7 @@ from keras.layers.convolutional import Conv2D as Convolution2D
 from keras.layers.convolutional import MaxPooling2D
 from keras.layers.convolutional import UpSampling2D
 from keras.layers.merge import concatenate #Concatenate (capital C) not working 
+import numpy as np
 
 #%%
 def get_encoder(autoencoder):
@@ -31,6 +32,24 @@ def cae_encode(data, encoder):
                       data[:,:,:,1].reshape(data.shape[0], imsize[0], imsize[0], 1)])
     num_pixels = X_enc.shape[1] * X_enc.shape[2] * X_enc.shape[3] #encoded pixels
     return(X_enc.reshape(X_enc.shape[0], num_pixels))
+
+def cae_autoencode(data, autoencoder):
+    if(len(data.shape)<3):
+        print('array of too few dimensions, shape:',data.shape)
+        print('expected at least 3 dimensions, returning None')
+        return(None)
+    data_list=[]
+    nchannels = data.shape[-1]
+    if(len(data.shape)>3):#batch of images
+        imsize = (data.shape[1],data.shape[2])
+        for i in np.arange(nchannels):
+            data_list.append(data[:,:,:,i].reshape(data.shape[0], imsize[0], imsize[0], 1))
+    else:#single image
+        imsize = (data.shape[0],data.shape[1])
+        for i in np.arange(nchannels):
+            data_list.append(data[:,:,i].reshape(1, imsize[0], imsize[0], 1))
+    X_enc=autoencoder.predict(data_list)
+    return(X_enc)
     
 #%%
 def cae_indepIn(nchannels=2, imsize=(32,32), encoding_dim_multiplier=8,

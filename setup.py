@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='decafx',
-      version='0.6',
+      version='0.6.1',
       description='Deep CAE feature extraction',
       url='http://github.com/nchlis',
       author='Nikolaos Kosmas Chlis',
