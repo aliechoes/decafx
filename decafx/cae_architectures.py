@@ -26,12 +26,37 @@ def get_encoder(autoencoder):
         encoder = Model(inputs=autoencoder.input, outputs=autoencoder.get_layer(name='encoder').output)
         return(encoder)
 
+#def cae_encode(data, encoder):
+#    imsize= (data.shape[1],data.shape[2])
+#    X_enc=encoder.predict([data[:,:,:,0].reshape(data.shape[0], imsize[0], imsize[0], 1),
+#                      data[:,:,:,1].reshape(data.shape[0], imsize[0], imsize[0], 1)])
+#    num_pixels = X_enc.shape[1] * X_enc.shape[2] * X_enc.shape[3] #encoded pixels
+#    return(X_enc.reshape(X_enc.shape[0], num_pixels))
 def cae_encode(data, encoder):
-    imsize= (data.shape[1],data.shape[2])
-    X_enc=encoder.predict([data[:,:,:,0].reshape(data.shape[0], imsize[0], imsize[0], 1),
-                      data[:,:,:,1].reshape(data.shape[0], imsize[0], imsize[0], 1)])
-    num_pixels = X_enc.shape[1] * X_enc.shape[2] * X_enc.shape[3] #encoded pixels
-    return(X_enc.reshape(X_enc.shape[0], num_pixels))
+    if(len(data.shape)<3):
+        print('array of too few dimensions, shape:',data.shape)
+        print('expected at least 3 dimensions, returning None')
+        return(None)
+    data_list=[]
+    nchannels = data.shape[-1]
+    if(len(data.shape)>3):#batch of images
+        imsize = (data.shape[1],data.shape[2])
+        for i in np.arange(nchannels):
+            data_list.append(data[:,:,:,i].reshape(data.shape[0], imsize[0], imsize[0], 1))
+    else:#single image
+        imsize = (data.shape[0],data.shape[1])
+        for i in np.arange(nchannels):
+            data_list.append(data[:,:,i].reshape(1, imsize[0], imsize[0], 1))
+    X_enc=encoder.predict(data_list)
+    nchannels=X_enc.shape[-1]#number of channels in the encoded dimension
+    #print('Xenc shape',X_enc.shape)
+    enc_list=[]
+    for i in np.arange(nchannels):
+        X_cur=X_enc[:,:,:,i]
+        #print('i',i,'X_cur shape',X_cur.shape)
+        num_pixels = X_cur.shape[1] * X_cur.shape[2]#encoded pixels
+        enc_list.append(X_cur.reshape(X_cur.shape[0], num_pixels))
+    return(np.concatenate(enc_list,axis=-1))
 
 def cae_autoencode(data, autoencoder):
     if(len(data.shape)<3):
