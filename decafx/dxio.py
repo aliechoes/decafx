@@ -34,6 +34,8 @@ def import_ideas(folder = 'extracted_tifs',
     #initialize the array to save the images
     #X=np.zeros(shape=(len(channels),imsize[0],imsize[1]),dtype=imtype)
     
+    if(type(folder)==list):
+        folder=tuple(folder)
     if(type(folder)!=tuple):
         print('Warning: folder not supplied as a tuple, trying to convert...')
         folder=(folder,)#assuming a string was provided
